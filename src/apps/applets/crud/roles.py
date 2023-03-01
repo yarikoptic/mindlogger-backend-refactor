@@ -146,7 +146,7 @@ class UserAppletAccessCRUD(BaseCRUD[UserAppletAccessSchema]):
 
         return db_result.scalars().all()
 
-    async def delete_all_by_applet_id(self, applet_id: int):
+    async def delete_all_by_applet_id(self, applet_id: uuid.UUID):
         query: Query = delete(UserAppletAccessSchema)
         query = query.where(UserAppletAccessSchema.applet_id == applet_id)
         await self._execute(query)
