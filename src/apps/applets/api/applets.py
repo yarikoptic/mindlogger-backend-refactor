@@ -13,9 +13,10 @@ from apps.applets.domain import (
 from apps.applets.domain.applet import (
     AppletDataRetention,
     AppletDetailPublic,
-    AppletInfoPublic,
+    AppletInfoPublic, AppletLibraryPublic,
 )
-from apps.applets.domain.applet_create import AppletCreate
+from apps.applets.domain.applet_create import AppletCreate, \
+    AppletLibraryPublish
 from apps.applets.domain.applet_link import AppletLink, CreateAccessLink
 from apps.applets.domain.applet_update import AppletUpdate
 from apps.applets.domain.applets import public_detail, public_history_detail
@@ -52,10 +53,11 @@ from infrastructure.http import get_language
 
 
 async def applet_list(
-    user: User = Depends(get_current_user),
-    language: str = Depends(get_language),
-    query_params: QueryParams = Depends(parse_query_params(AppletQueryParams)),
-    session=Depends(session_manager.get_session),
+        user: User = Depends(get_current_user),
+        language: str = Depends(get_language),
+        query_params: QueryParams = Depends(
+            parse_query_params(AppletQueryParams)),
+        session=Depends(session_manager.get_session),
 ) -> ResponseMulti[AppletInfoPublic]:
     async with atomic(session):
         applets = await AppletService(
@@ -71,10 +73,10 @@ async def applet_list(
 
 
 async def applet_retrieve(
-    id_: uuid.UUID,
-    user: User = Depends(get_current_user),
-    language: str = Depends(get_language),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        language: str = Depends(get_language),
+        session=Depends(session_manager.get_session),
 ) -> Response[AppletDetailPublic]:
     async with atomic(session):
         applet = await AppletService(
@@ -84,9 +86,9 @@ async def applet_retrieve(
 
 
 async def applet_create(
-    user: User = Depends(get_current_user),
-    schema: AppletCreate = Body(...),
-    session=Depends(session_manager.get_session),
+        user: User = Depends(get_current_user),
+        schema: AppletCreate = Body(...),
+        session=Depends(session_manager.get_session),
 ) -> Response[public_detail.Applet]:
     async with atomic(session):
         applet = await AppletService(session, user.id).create(schema)
@@ -94,10 +96,10 @@ async def applet_create(
 
 
 async def applet_update(
-    id_: uuid.UUID,
-    user: User = Depends(get_current_user),
-    schema: AppletUpdate = Body(...),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        schema: AppletUpdate = Body(...),
+        session=Depends(session_manager.get_session),
 ) -> Response[public_detail.Applet]:
     async with atomic(session):
         applet = await AppletService(session, user.id).update(id_, schema)
@@ -105,9 +107,9 @@ async def applet_update(
 
 
 async def applet_versions_retrieve(
-    id_: uuid.UUID,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ) -> ResponseMulti[PublicHistory]:
     async with atomic(session):
         histories = await retrieve_versions(session, id_)
@@ -115,10 +117,10 @@ async def applet_versions_retrieve(
 
 
 async def applet_version_retrieve(
-    id_: uuid.UUID,
-    version: str,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        version: str,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ) -> Response[public_history_detail.AppletDetailHistory]:
     async with atomic(session):
         applet = await retrieve_applet_by_version(session, id_, version)
@@ -130,10 +132,10 @@ async def applet_version_retrieve(
 
 
 async def applet_version_changes_retrieve(
-    id_: uuid.UUID,
-    version: str,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        version: str,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ) -> Response[PublicAppletHistoryChange]:
     async with atomic(session):
         changes = await AppletHistoryService(
@@ -143,27 +145,27 @@ async def applet_version_changes_retrieve(
 
 
 async def applet_delete(
-    id_: uuid.UUID,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ):
     async with atomic(session):
         await AppletService(session, user.id).delete_applet_by_id(id_)
 
 
 async def applet_set_folder(
-    applet_folder: AppletFolder,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        applet_folder: AppletFolder,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ):
     async with atomic(session):
         await AppletService(session, user.id).set_applet_folder(applet_folder)
 
 
 async def applet_unique_name_get(
-    schema: AppletName = Body(...),
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        schema: AppletName = Body(...),
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ) -> Response[AppletUniqueName]:
     async with atomic(session):
         new_name = await AppletService(session, user.id).get_unique_name(
@@ -173,10 +175,10 @@ async def applet_unique_name_get(
 
 
 async def applet_link_create(
-    id_: uuid.UUID,
-    user: User = Depends(get_current_user),
-    schema: CreateAccessLink = Body(...),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        schema: CreateAccessLink = Body(...),
+        session=Depends(session_manager.get_session),
 ) -> Response[AppletLink]:
     async with atomic(session):
         access_link = await AppletService(session, user.id).create_access_link(
@@ -185,10 +187,23 @@ async def applet_link_create(
     return Response(result=access_link)
 
 
+async def applet_publish_to_library(
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        schema: AppletLibraryPublish = Body(...),
+        session=Depends(session_manager.get_session),
+) -> Response[AppletLibraryPublic]:
+    async with atomic(session):
+        library_id = await AppletService(session, user.id).publish_to_library(
+            id_, schema
+        )
+    return Response(result=AppletLibraryPublic)
+
+
 async def applet_link_get(
-    id_: uuid.UUID,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ) -> Response[AppletLink]:
     async with atomic(session):
         access_link = await AppletService(session, user.id).get_access_link(
@@ -198,19 +213,19 @@ async def applet_link_get(
 
 
 async def applet_link_delete(
-    id_: uuid.UUID,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ):
     async with atomic(session):
         await AppletService(session, user.id).delete_access_link(applet_id=id_)
 
 
 async def applet_set_data_retention(
-    id_: uuid.UUID,
-    schema: AppletDataRetention,
-    user: User = Depends(get_current_user),
-    session=Depends(session_manager.get_session),
+        id_: uuid.UUID,
+        schema: AppletDataRetention,
+        user: User = Depends(get_current_user),
+        session=Depends(session_manager.get_session),
 ):
     async with atomic(session):
         await AppletService(session, user.id).set_data_retention(

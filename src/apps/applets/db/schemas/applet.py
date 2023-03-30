@@ -11,7 +11,7 @@ from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 from infrastructure.database.base import Base
 
-__all__ = ["AppletSchema", "AppletHistorySchema"]
+__all__ = ["AppletSchema", "AppletHistorySchema", "AppletLibrary"]
 
 
 class _BaseAppletSchema:
@@ -55,3 +55,11 @@ class AppletHistorySchema(_BaseAppletSchema, Base):
     user_id = Column(
         ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
     )
+
+
+class AppletLibrary(Base):
+    __tablename__ = 'libraries'
+
+    display_name = Column(String(100))
+    keywords = Column(JSONB())
+    applet_history_id = Column(ForeignKey("applet_histories.id_version"))

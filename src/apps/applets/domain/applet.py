@@ -44,6 +44,12 @@ class Applet(InternalModel):
     updated_at: datetime.datetime | None
 
 
+class AppletLibrary(InternalModel):
+    id: uuid.UUID
+    display_name: str
+    keywords: list[str] = Field(default_factory=list)
+
+
 class ThemePublic(PublicModel):
     id: uuid.UUID
     name: str
@@ -120,3 +126,9 @@ class AppletUniqueName(PublicModel):
 class AppletDataRetention(InternalModel):
     period: PositiveInt
     retention: DataRetention
+
+
+class AppletLibraryPublic(PublicModel):
+    id: uuid.UUID
+    display_name: str
+    keywords: list[str] = Field(default_factory=list)

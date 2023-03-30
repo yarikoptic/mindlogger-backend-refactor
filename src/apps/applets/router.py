@@ -153,6 +153,17 @@ router.post(
     },
 )(applet_link_create)
 
+router.post(
+    "/{id_}/publish",
+    status_code=status.HTTP_201_CREATED,
+    response_model=Response[AppletLink],
+    responses={
+        status.HTTP_201_CREATED: {"model": Response[AppletLink]},
+        **DEFAULT_OPENAPI_RESPONSE,
+        **AUTHENTICATION_ERROR_RESPONSES,
+    },
+)(applet_link_create)
+
 router.get(
     "/{id_}/access_link",
     status_code=status.HTTP_200_OK,

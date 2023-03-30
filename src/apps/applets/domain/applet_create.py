@@ -24,3 +24,8 @@ class AppletCreate(InternalModel):
 
     activities: list[ActivityCreate]
     activity_flows: list[FlowCreate]
+
+
+class AppletLibraryPublish(InternalModel):
+    display_name: str
+    keywords: list[str]
